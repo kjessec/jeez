@@ -1,0 +1,12 @@
+[package]
+name = "bin"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio.workspace = true
+log.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+state = { path = "../state" }
+hypr = { path = "../hypr" }
