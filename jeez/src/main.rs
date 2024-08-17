@@ -35,7 +35,7 @@ async fn main() -> anyhow::Result<()> {
         "{} / {}",
         initial_current_app_name.class, initial_current_app_name.title
     );
-    //
+
     let mut state = state::State {
         total_workspaces: initial_total_workspaces,
         current_workspace: initial_current_workspace,

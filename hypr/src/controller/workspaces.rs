@@ -5,7 +5,7 @@ use super::Controller;
 
 #[derive(Serialize, Deserialize)]
 pub struct Workspace {
-    pub id: u8,
+    pub id: i32,
     pub name: String,
     pub monitor: String,
 
