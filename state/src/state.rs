@@ -8,8 +8,8 @@ use crate::Events;
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct State {
-    pub total_workspaces: BTreeSet<usize>,
-    pub current_workspace: u32,
+    pub total_workspaces: BTreeSet<i32>,
+    pub current_workspace: i32,
     pub current_app_name: String,
 
     pub current_volume: u32,
@@ -34,20 +34,22 @@ impl State {
                     Ok(StateUpdate::Updated)
                 }
                 HyprctlEvents::CreateWorkspaceV2 { workspace_id, .. } => {
-                    let workspace_id: usize = workspace_id.parse().unwrap();
-                    self.total_workspaces.insert(workspace_id);
+                    let workspace_id: i32 = workspace_id.parse().unwrap();
+                    if workspace_id > 0 {
+                        self.total_workspaces.insert(workspace_id);
+                        return Ok(StateUpdate::Updated);
+                    }
 
-                    // self.current_workspace = workspace_id as u32;
-                    Ok(StateUpdate::Updated)
+                    Ok(StateUpdate::Nop)
                 }
                 HyprctlEvents::DestroyWorkspaceV2 { workspace_id, .. } => {
-                    let workspace_id: usize = workspace_id.parse().unwrap();
+                    let workspace_id: i32 = workspace_id.parse().unwrap();
                     self.total_workspaces.remove(&workspace_id);
 
                     Ok(StateUpdate::Updated)
                 }
                 HyprctlEvents::MoveWorkspaceV2 { workspace_id, .. } => {
-                    let next_workspace: u32 = workspace_id.parse().unwrap();
+                    let next_workspace: i32 = workspace_id.parse().unwrap();
                     self.current_workspace = next_workspace;
                     Ok(StateUpdate::Updated)
                 }
