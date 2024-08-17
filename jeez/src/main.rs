@@ -43,6 +43,9 @@ async fn main() -> anyhow::Result<()> {
         current_brightness: Default::default(),
     };
 
+    // print initial state
+    println!("{}", json!(state));
+
     let (tx, mut rx) = mpsc::channel::<state::Events>(1024);
 
     tokio::spawn(async move {
