@@ -27,7 +27,8 @@ async fn main() -> anyhow::Result<()> {
     .await;
 
     // initialize global state with some default values
-    let initial_total_workspaces = hypr.controller().get_workspaces().await?.len() as usize;
+    let initial_total_workspaces =
+        (1..hypr.controller().get_workspaces().await?.len() + 1 as usize).collect();
     let initial_current_workspace = hypr.controller().get_active_workspace().await?.id as u32;
     let initial_current_app_name = hypr.controller().get_active_window().await?;
     let initial_current_app_name = format!(

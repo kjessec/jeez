@@ -1,3 +1,5 @@
+use std::collections::BTreeSet;
+
 use hypr::events::HyprctlEvents;
 use log::info;
 use serde::{Deserialize, Serialize};
@@ -6,7 +8,7 @@ use crate::Events;
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct State {
-    pub total_workspaces: usize,
+    pub total_workspaces: BTreeSet<usize>,
     pub current_workspace: u32,
     pub current_app_name: String,
 
@@ -33,15 +35,15 @@ impl State {
                 }
                 HyprctlEvents::CreateWorkspaceV2 { workspace_id, .. } => {
                     let workspace_id: usize = workspace_id.parse().unwrap();
-                    if workspace_id > self.total_workspaces {
-                        self.total_workspaces = workspace_id;
-                    };
+                    self.total_workspaces.insert(workspace_id);
 
-                    self.current_workspace = workspace_id as u32;
+                    // self.current_workspace = workspace_id as u32;
                     Ok(StateUpdate::Updated)
                 }
-                HyprctlEvents::DestroyWorkspaceV2 { .. } => {
-                    self.total_workspaces -= 1;
+                HyprctlEvents::DestroyWorkspaceV2 { workspace_id, .. } => {
+                    let workspace_id: usize = workspace_id.parse().unwrap();
+                    self.total_workspaces.remove(&workspace_id);
+
                     Ok(StateUpdate::Updated)
                 }
                 HyprctlEvents::MoveWorkspaceV2 { workspace_id, .. } => {
